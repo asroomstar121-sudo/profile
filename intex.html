@@ -1,0 +1,702 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ROOMSTAR | Cyber Identity</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --green: #35ff9a;
+  --cyan: #00eaff;
+  --bg: #030807;
+  --panel: rgba(4, 19, 13, .92);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px 16px;
+  color: #d7ffe9;
+  background:
+    radial-gradient(ellipse at 50% 0%, #103629 0%, transparent 48%),
+    var(--bg);
+  font-family: 'Share Tech Mono', monospace;
+  overflow-x: hidden;
+}
+
+/* Animated matrix background */
+#matrix {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .22;
+}
+
+/* Screen scan lines */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(53, 255, 154, .035) 4px
+  );
+}
+
+/* Main profile card */
+.card {
+  width: min(100%, 600px);
+  position: relative;
+  z-index: 1;
+  padding: 30px;
+  overflow: hidden;
+  border: 1px solid #35ff9a65;
+  background: var(--panel);
+  box-shadow:
+    0 0 25px #35ff9a16,
+    inset 0 0 25px #35ff9a08;
+  animation: appear 1s ease-out, cardGlow 4s ease-in-out infinite alternate;
+}
+
+/* Moving light across the card */
+.card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 55%;
+  height: 200%;
+  pointer-events: none;
+  transform: rotate(18deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(53, 255, 154, .045),
+    transparent
+  );
+  animation: sweep 9s ease-in-out infinite;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardGlow {
+  from {
+    box-shadow: 0 0 14px #35ff9a10, inset 0 0 18px #35ff9a05;
+  }
+  to {
+    box-shadow: 0 0 34px #35ff9a24, inset 0 0 26px #35ff9a0b;
+  }
+}
+
+@keyframes sweep {
+  0%, 65% { left: -100%; }
+  100% { left: 180%; }
+}
+
+/* Header */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #35ff9a35;
+  color: var(--green);
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--cyan);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+  animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .35;
+    transform: scale(.72);
+  }
+}
+
+/* Profile identity */
+.identity {
+  text-align: center;
+  padding: 30px 0 24px;
+}
+
+.avatar {
+  width: 124px;
+  height: 124px;
+  margin: auto;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--green);
+  border-radius: 50%;
+  background: #0a2017;
+  overflow: hidden;
+  box-shadow: 0 0 22px #35ff9a30;
+  animation: avatarGlow 3s infinite alternate;
+}
+
+.avatar::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px dashed #35ff9a80;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: rotateRing 18s linear infinite;
+}
+
+@keyframes avatarGlow {
+  from { box-shadow: 0 0 12px #35ff9a20; }
+  to { box-shadow: 0 0 32px #35ff9a65; }
+}
+
+@keyframes rotateRing {
+  to { transform: rotate(360deg); }
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.avatar .placeholder {
+  font: 800 42px 'Orbitron', sans-serif;
+  color: var(--green);
+}
+
+/* Glitch name */
+h1 {
+  position: relative;
+  display: inline-block;
+  margin: 24px 0 8px;
+  font: 800 clamp(27px, 7vw, 42px) 'Orbitron', sans-serif;
+  letter-spacing: 3px;
+  color: var(--green);
+  text-shadow: 0 0 18px #35ff9a55;
+  animation: nameGlow 3s infinite alternate;
+}
+
+h1::before,
+h1::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+}
+
+h1::before {
+  color: var(--cyan);
+  animation: glitchA 5s infinite;
+}
+
+h1::after {
+  color: #ff3864;
+  animation: glitchB 5s infinite;
+}
+
+@keyframes nameGlow {
+  to { text-shadow: 0 0 28px #35ff9a85; }
+}
+
+@keyframes glitchA {
+  0%, 89%, 93%, 100% {
+    opacity: 0;
+    transform: translateX(0);
+    clip-path: inset(0 0 100% 0);
+  }
+  90% {
+    opacity: .9;
+    transform: translateX(3px);
+    clip-path: inset(15% 0 65% 0);
+  }
+  91% {
+    opacity: .8;
+    transform: translateX(-3px);
+    clip-path: inset(65% 0 15% 0);
+  }
+}
+
+@keyframes glitchB {
+  0%, 91%, 95%, 100% {
+    opacity: 0;
+    transform: translateX(0);
+    clip-path: inset(100% 0 0 0);
+  }
+  92% {
+    opacity: .8;
+    transform: translateX(-3px);
+    clip-path: inset(45% 0 35% 0);
+  }
+  93% {
+    opacity: .7;
+    transform: translateX(3px);
+    clip-path: inset(75% 0 8% 0);
+  }
+}
+
+.subtitle {
+  color: var(--cyan);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.tag {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 8px 14px;
+  border: 1px solid #35ff9a60;
+  color: var(--green);
+  font-size: 11px;
+  letter-spacing: 1px;
+  background: #35ff9a08;
+  transition: background .25s, box-shadow .25s;
+}
+
+.tag:hover {
+  background: #35ff9a18;
+  box-shadow: 0 0 16px #35ff9a25;
+}
+
+/* Details section */
+.section-title {
+  margin: 22px 0 12px;
+  color: var(--green);
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.item {
+  position: relative;
+  min-width: 0;
+  padding: 14px;
+  background: #35ff9a08;
+  border: 1px solid #35ff9a20;
+  overflow: hidden;
+  transition:
+    transform .25s ease,
+    border-color .25s ease,
+    background .25s ease,
+    box-shadow .25s ease;
+}
+
+.item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--green);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform .25s ease;
+}
+
+.item:hover {
+  transform: translateY(-3px);
+  border-color: #35ff9a85;
+  background: #35ff9a12;
+  box-shadow: 0 5px 18px #35ff9a0b;
+}
+
+.item:hover::before {
+  transform: scaleY(1);
+}
+
+.label {
+  color: #7eab91;
+  font-size: 10px;
+  margin-bottom: 9px;
+  letter-spacing: .5px;
+}
+
+.value {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.value a {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: text-shadow .2s;
+}
+
+.value a:hover {
+  text-decoration: underline;
+  text-shadow: 0 0 12px #00eaff85;
+}
+
+/* Footer */
+.footer {
+  margin-top: 24px;
+  padding-top: 15px;
+  border-top: 1px solid #35ff9a35;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: #729b82;
+  font-size: 10px;
+}
+
+/* Small terminal decoration */
+.terminal {
+  margin-top: 20px;
+  padding: 12px;
+  border: 1px solid #35ff9a22;
+  background: #020704b8;
+  color: #91c9a7;
+  font-size: 11px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.terminal-title {
+  color: var(--cyan);
+  margin-bottom: 5px;
+}
+
+.cursor {
+  display: inline-block;
+  width: 7px;
+  height: 12px;
+  margin-left: 3px;
+  vertical-align: -2px;
+  background: var(--green);
+  animation: cursorBlink .8s steps(2, start) infinite;
+}
+
+@keyframes cursorBlink {
+  to { visibility: hidden; }
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+  body {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .details {
+    grid-template-columns: 1fr;
+  }
+
+  .full {
+    grid-column: auto;
+  }
+
+  .top {
+    font-size: 10px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix" aria-hidden="true"></canvas>
+
+<main class="card">
+
+  <header class="top">
+    <span>ROOMSTAR // PROFILE</span>
+    <span class="status">
+      <span class="status-dot"></span>
+      SYSTEM ONLINE
+    </span>
+  </header>
+
+  <section class="identity">
+
+    <div class="avatar">
+      <img
+        src="./profile.jpeg"
+        alt="ROOMSTAR profile photo"
+        onerror="this.style.display='none';
+        this.nextElementSibling.style.display='block';"
+      >
+      <span class="placeholder" style="display:none">R*</span>
+    </div>
+
+    <h1 data-text="ROOMSTAR">ROOMSTAR</h1>
+
+    <div class="subtitle">
+      CYBERSECURITY RESEARCHER
+    </div>
+
+    <span class="tag">GRAY HAT HACKER</span>
+
+  </section>
+
+  <div class="section-title">// IDENTITY DATABASE</div>
+
+  <section class="details">
+
+    <div class="item">
+      <div class="label">REAL NAME</div>
+      <div class="value">Muhammad Sinan</div>
+    </div>
+
+    <div class="item">
+      <div class="label">AGE</div>
+      <div class="value">N/A</div>
+    </div>
+
+    <div class="item">
+      <div class="label">LOCATION</div>
+      <div class="value">Malappuram, Kerala, India</div>
+    </div>
+
+    <div class="item">
+      <div class="label">SPECIALIZATION</div>
+      <div class="value">Cybersecurity Research</div>
+    </div>
+
+    <div class="item full">
+      <div class="label">HACKER CLASSIFICATION</div>
+      <div class="value">Gray Hat Security Research</div>
+    </div>
+
+    <div class="item full">
+      <div class="label">INSTAGRAM</div>
+      <div class="value">
+        <a
+          href="https://www.instagram.com/room__star/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >@room__star ↗</a>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="terminal">
+    <div class="terminal-title">
+      [ ROOMSTAR@CYBERSECURITY ~ ]
+    </div>
+    <div id="terminalLine">
+      Initializing profile interface...
+    </div>
+    <span class="cursor"></span>
+  </div>
+
+  <footer class="footer">
+    <span>IDENTITY: ROOMSTAR</span>
+    <span>SECURITY // RESEARCH</span>
+  </footer>
+
+</main>
+
+<script>
+/* Matrix animation */
+(() => {
+  const canvas = document.getElementById("matrix");
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) return;
+
+  const characters =
+    "01ABCDEFGHIJKLMNOPQRSTUVWXYZアイウエオカキクケコ";
+
+  let width = 0;
+  let height = 0;
+  let columns = 0;
+  let drops = [];
+  let fontSize = 14;
+  let animationId;
+  let lastFrame = 0;
+  const frameInterval = 55;
+
+  function resizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    columns = Math.ceil(width / fontSize);
+    drops = Array.from(
+      { length: columns },
+      () => Math.random() * (height / fontSize)
+    );
+  }
+
+  function draw(timestamp) {
+    animationId = requestAnimationFrame(draw);
+
+    if (timestamp - lastFrame < frameInterval) return;
+    lastFrame = timestamp;
+
+    ctx.fillStyle = "rgba(3, 8, 7, 0.12)";
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      const char = characters[
+        Math.floor(Math.random() * characters.length)
+      ];
+
+      const x = i * fontSize;
+      const y = drops[i] * fontSize;
+
+      ctx.fillStyle = Math.random() > 0.96
+        ? "#b4ffda"
+        : "#35ff9a";
+
+      ctx.fillText(char, x, y);
+
+      if (y > height && Math.random() > 0.975) {
+        drops[i] = 0;
+      } else {
+        drops[i]++;
+      }
+    }
+  }
+
+  resizeCanvas();
+  animationId = requestAnimationFrame(draw);
+
+  window.addEventListener("resize", resizeCanvas);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      cancelAnimationFrame(animationId);
+    } else {
+      lastFrame = 0;
+      animationId = requestAnimationFrame(draw);
+    }
+  });
+})();
+
+/* Animated terminal text */
+(() => {
+  const output = document.getElementById("terminalLine");
+
+  const messages = [
+    "Loading ROOMSTAR identity...",
+    "Cybersecurity research mode: READY",
+    "Profile interface: ONLINE",
+    "Gray Hat security researcher // ROOMSTAR"
+  ];
+
+  let messageIndex = 0;
+  let characterIndex = 0;
+  let deleting = false;
+
+  function typeMessage() {
+    const message = messages[messageIndex];
+
+    if (!deleting) {
+      characterIndex++;
+      output.textContent = message.slice(0, characterIndex);
+
+      if (characterIndex >= message.length) {
+        deleting = true;
+        setTimeout(typeMessage, 1800);
+        return;
+      }
+    } else {
+      characterIndex--;
+      output.textContent = message.slice(0, characterIndex);
+
+      if (characterIndex <= 0) {
+        deleting = false;
+        messageIndex = (messageIndex + 1) % messages.length;
+      }
+    }
+
+    setTimeout(typeMessage, deleting ? 22 : 42);
+  }
+
+  typeMessage();
+})();
+</script>
+
+</body>
+</html>
